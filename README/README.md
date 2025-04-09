@@ -14,8 +14,6 @@ Ce projet a pour objectif de prédire la production éolienne en France en utili
 
 ## Prérequis
 
-Avant de commencer, assurez-vous d'avoir installé les prérequis suivants sur votre machine :
-
 - **R** version 4.x ou plus
 - **Packages R** :
   - `ggplot2` pour la visualisation des données
@@ -25,7 +23,7 @@ Avant de commencer, assurez-vous d'avoir installé les prérequis suivants sur v
   - `caret` pour les modèles de machine learning
   - `glmnet` pour les modèles linéaires généralisés (GLM)
 
-Vous pouvez installer les packages R nécessaires en exécutant les commandes suivantes dans R :
+## Installation
 
 ```R
 install.packages(c("ggplot2", "dplyr", "tidyr", "lubridate", "caret", "glmnet"))
