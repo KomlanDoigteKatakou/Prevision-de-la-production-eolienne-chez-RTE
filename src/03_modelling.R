@@ -1,5 +1,5 @@
-# Ajustement d'un modèle GAM avec lien logarithmique pour
-# prédire la puissance installée
+# Ajustement d'un modèle GAM avec lien logarithmique pour prédire la puissance installée
+
 
 mod_gam_noFC_linklog <- bam(eolien ~ s(ff100_fr) + s(time_since_beginning, k=7), data = df_fr, family = gaussian(link = "log"), discrete = TRUE)
 df_fr[,pi := exp(predict(mod_gam_noFC_linklog, newdata = df_fr %>% mutate(ff100_fr = 12)))]
