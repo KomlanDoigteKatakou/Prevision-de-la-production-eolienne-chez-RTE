@@ -9,10 +9,6 @@ library(data.table)
 library(ggplot2)
 library(mgcv)
 
-rmse <- function(obs, prev, na_rm = TRUE){
-  return(sqrt(mean((prev - obs)^2, na.rm = na_rm)))
-}
-
 #---AVEC 17 ZONES
 
 # 1. Agrégation des fichiers, calcul de ff50 juste pour la nouvelle carte
@@ -202,7 +198,7 @@ saveRDS(df_meteo_zone %>%
                       names_prefix = "ff50_"), 
         "data/input_model/df_meteo_zone_wide.RDS")
 
-# Modélisation (avec et sans renorm) -----------------------------------------------------
+# Modélisation GAM -----------------------------------------------------
 
 df_fr <- merge(
   df_meteo_zone[, .(ff50_fr = mean(ff50, na.rm = TRUE)), by = .(date_cible)],
@@ -219,7 +215,7 @@ mod_gam_noFC_linklog <- bam(
   discrete = TRUE
 )
 
-# PREVISION de eolien SANS RENORM
+# Prévision directe de la production éolienne
 df_fr[, eolien_pred := exp(predict(mod_gam_noFC_linklog, newdata = df_fr))]
 
 # Calcul du RMSE
@@ -243,7 +239,7 @@ ggplot(df_fr, aes(x = date_cible)) +
   theme(legend.position = "top")
 
 
-# SUITE DE LA MODELISATION (AVEC RENORM)
+# Prévision du facteur de charge
 
 df_fr[,pi := exp(predict(mod_gam_noFC_linklog, newdata = df_fr %>% mutate(ff50_fr = 12*(0.5^0.2))))]
 
@@ -477,7 +473,7 @@ saveRDS(df_meteo_zone %>%
                       names_prefix = "ff50_"), 
         "data/input_model/df_meteo_zone_wide.RDS")
 
-# Modélisation (avec et sans renorm) -----------------------------------------------------
+# Modélisation GAM -----------------------------------------------------
 
 df_fr <- merge(
   df_meteo_zone[, .(ff50_fr = mean(ff50, na.rm = TRUE)), by = .(date_cible)],
@@ -494,7 +490,7 @@ mod_gam_noFC_linklog <- bam(
   discrete = TRUE
 )
 
-# PREVISION de eolien SANS RENORM
+# Prévision directe de la production éolienne
 df_fr[, eolien_pred := exp(predict(mod_gam_noFC_linklog, newdata = df_fr))]
 
 # Calcul du RMSE
@@ -518,7 +514,7 @@ ggplot(df_fr, aes(x = date_cible)) +
   theme(legend.position = "top")
 
 
-# SUITE DE LA MODELISATION (AVEC RENORM)
+# Prévision du facteur de charge
 
 df_fr[,pi := exp(predict(mod_gam_noFC_linklog, newdata = df_fr %>% mutate(ff50_fr = 12*(0.5^0.2))))]
 
