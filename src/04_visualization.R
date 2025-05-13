@@ -1,14 +1,19 @@
-# Visualisation des données de vent
+# Visualisation de la vitesse du vent (Zone 1)
+
 ggplot(df_meteo_zone) + 
   geom_tile(aes(x = longitude, y = latitude, fill = ff100_1)) + 
   theme_minimal() +
   scale_fill_viridis_c()
 
-# Visualisation des prédictions de production
+
+# Visualisation de l'évolution de la puissance installée et de la production éolienne réelle
+
 ggplot(df_fr) + geom_line(aes(x=date_cible, y=pi, color="PI")) + 
   geom_line(aes(x=date_cible, y=eolien, color="prod")) 
 
-# Visualisation des résidus
+
+# Visualisation des résidus (Ecarts entre les prédictions du facteur de charge et les vraies valeurs)
+
 ggplot(df_prev) + 
   geom_point(aes(x = prev, y = FC - prev)) + 
   labs(title = "Résidus de la prédiction", x = "Prédictions", y = "Résidus") +
