@@ -1,4 +1,5 @@
-# Importation des données brutes et nettoyage
+ # Importation des données brutes et nettoyage (données de production)
+
 df_prod0 <- map(list.files("data/eco2mix/", "xls$", full.names = TRUE), function(ff) {
   log_info(ff)
   tmp <- read.table(ff, fill = T, header = T, quote="", sep  ="\t", row.names = NULL)
@@ -9,12 +10,18 @@ df_prod0 <- map(list.files("data/eco2mix/", "xls$", full.names = TRUE), function
 }) %>% 
   rbindlist(use.names=TRUE)
 
+# Agrégation horaire des données de production*
+
 df_prod0[,date_cible := with_tz(force_tz(ymd_hm(paste(date, heures)), "Europe/Paris"), "UTC")]
 df_prod <- df_prod0[,.(eolien = mean(eolien)), by = .(date_cible = ceiling_date(date_cible, unit = "hour"))]
+
+# Sauvegarde des données de production sous format RDS
+
 saveRDS(df_prod, "data/input_model/df_prod.RDS")
 
 
-# Importation des données de vent
+# Importation, traitement et agrégation des données de vent
+
 df_meteo_zone <- map(list.files("data/wind_era5", "nc", full.names = TRUE), function(ff){
   logger::log_info(ff)
   fid <- ncdf4::nc_open(ff)
@@ -35,4 +42,7 @@ df_meteo_zone <- map(list.files("data/wind_era5", "nc", full.names = TRUE), func
   df_meteo_zone_ff
 }) %>% 
   rbindlist(use.names=TRUE)
+
+# Sauvegarde sous format large (Extension RDS)
+
 saveRDS(df_meteo_zone %>% pivot_wider(date_cible, names_from = ZC.adapte, values_from = ff100, names_prefix = "ff100_"), "data/input_model/df_meteo_zone_wide.RDS")
