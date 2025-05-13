@@ -1,3 +1,15 @@
+# Zones climatiques
+df_grille <- fread("data/ZC_grille_01_elargie.csv")
+dt_dpt_for_plot <- ggplot2::map_data("france") %>% filter(!stringr::str_detect(region, "Corse"))
+
+ggplot(df_grille) + 
+  geom_raster(aes(x=Lon, y=Lat, fill = factor(ZC.adapte)), alpha = 0.3, show.legend = FALSE) + 
+  theme_minimal() + 
+  scale_alpha(range = c(0.2, 0.5), na.value = 0) + 
+  geom_polygon(aes(long, lat, group = group),fill = NA, colour = "grey70", data=dt_dpt_for_plot, alpha = 0.5) +
+  geom_text(aes(x=Lon, y=Lat, label = ZC.adapte), df_grille[,.(Lon= mean(Lon), Lat= mean(Lat)), by = .(ZC.adapte)]) +
+  coord_quickmap()
+
 # Visualisation de la vitesse du vent (Zone 1)
 
 ggplot(df_meteo_zone) + 
